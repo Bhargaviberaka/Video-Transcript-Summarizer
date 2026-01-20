@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Transcript Summarizer</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        textarea { width: 100%; height: 150px; }
+        button { padding: 10px 20px; margin-top: 10px; }
+        .result { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Video Transcript Summarizer</h1>
+
+    <h3>Summarize YouTube Transcript</h3>
+    <input type="text" id="youtube-video-id" placeholder="Enter YouTube Video ID">
+    <button onclick="summarizeYoutube()">Summarize YouTube Video</button>
+
+    <h3>Or Paste Transcript Below</h3>
+    <textarea id="transcript" placeholder="Paste transcript here"></textarea>
+    <button onclick="summarizeTranscript()">Summarize Transcript</button>
+
+    <div class="result" id="result"></div>
+
+    <script>
+        function summarizeYoutube() {
+            const videoId = document.getElementById("youtube-video-id").value;
+            
+            fetch("/summarize_youtube", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ video_id: videoId }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("result").innerHTML = `<h3>Summary:</h3><p>${data.summary}</p>`;
+            })
+            .catch(error => {
+                document.getElementById("result").innerHTML = `<h3>Error:</h3><p>${error.message}</p>`;
+            });
+        }
+
+        function summarizeTranscript() {
+            const transcript = document.getElementById("transcript").value;
+
+            fetch("/summarize_transcript", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ transcript: transcript }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("result").innerHTML = `<h3>Summary:</h3><p>${data.summary}</p>`;
+            })
+            .catch(error => {
+                document.getElementById("result").innerHTML = `<h3>Error:</h3><p>${error.message}</p>`;
+            });
+        }
+    </script>
+</body>
+</html>
